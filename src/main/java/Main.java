@@ -1,10 +1,17 @@
+import SyntaxAnalyzer.SyntaxAnalyzer;
+import SyntaxAnalyzer.SyntaxVariable;
+import SyntaxAnalyzer.SyntaxVariables.SourceFile;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) {
-        System.out.println("Hello");
+    public static void main(String[] args) throws Exception {
+        SyntaxAnalyzer analyzer = new SyntaxAnalyzer(readSourceCode("in.txt"));
+
+        SyntaxVariable tree = analyzer.getSyntaxTree();
+        System.out.println(tree.toJSON());
     }
 
     /**
@@ -13,7 +20,7 @@ public class Main {
      * @return StringBuilder - which represents the file
      * @throws FileNotFoundException - if the file from `path` doesn't exists
      */
-    StringBuilder readSourceCode(String path) throws FileNotFoundException {
+    static StringBuilder readSourceCode(String path) throws FileNotFoundException {
         Scanner sc = new Scanner(new File("in.txt"));
         StringBuilder file  = new StringBuilder();
         // read - line by line and add it to the string builder

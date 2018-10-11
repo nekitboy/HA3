@@ -25,6 +25,14 @@ public class LexicalAnalyzer {
             this.lexeme = lexeme;
         }
 
+        public TypeOfToken getType() {
+            return type;
+        }
+
+        public String getLexeme() {
+            return lexeme;
+        }
+
         @Override
         public String toString() {
             return type.toString() + ": " + lexeme;
@@ -63,6 +71,23 @@ public class LexicalAnalyzer {
         this.pos = 0;
         this.len = line.length();
         this.line = line;
+    }
+
+    public ArrayList<Token> getAllTokens() throws Exception {
+        ArrayList <Token> tokens = new ArrayList<>();
+        Token token = null;
+
+        // if meet EOF - finish tokenizing
+        while (token == null || token.type != LexicalAnalyzer.TypeOfToken.EOF){
+            // get next token
+            token = nextToken();
+            if (token != null && token.type != LexicalAnalyzer.TypeOfToken.WhiteSpace) {
+                tokens.add(token);
+            }
+            if(token == null)
+                break;
+        }
+        return tokens;
     }
 
     // Gets next token
@@ -325,7 +350,11 @@ public class LexicalAnalyzer {
             }
         }
         // If found at least one symbol that matched to the pattern - return token
-        if (found) { pos = locPos; return new Token(token, str.deleteCharAt(str.length()-1).toString()); }
+        if (found) {
+            if(locPos < len)
+                str = str.deleteCharAt(str.length()-1);
+            pos = locPos; return new Token(token, str.toString());
+        }
         // Else return null
         else return null;
     }
