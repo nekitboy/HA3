@@ -1,8 +1,2 @@
 package main
-
-import (
-    "bufio"
-    "fmt"
-    "io/ioutil"
-    "os"
-)
+import (identifier "bufio";)

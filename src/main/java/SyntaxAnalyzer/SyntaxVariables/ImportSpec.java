@@ -2,6 +2,7 @@ package SyntaxAnalyzer.SyntaxVariables;
 
 import SyntaxAnalyzer.SyntaxVariable;
 
+// ImportSpec   = [ "." | PackageName ] ImportPath .
 public class ImportSpec extends SyntaxVariable{
     public static final String type = "ImportSpec";
 
