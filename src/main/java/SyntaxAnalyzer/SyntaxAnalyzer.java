@@ -67,6 +67,7 @@ public class SyntaxAnalyzer {
             while (flag) {
                 TopLevelDecl tld = null;
                 try {
+
                     tld = topLevelDecl(locPos);
                 }
                 catch (Exception e) {
@@ -136,9 +137,10 @@ public class SyntaxAnalyzer {
 
             if (tokens.get(locPos).getType().equals(TypeOfToken.Punctuation) && tokens.get(locPos).getLexeme().equals("(")) {
                 locPos++;
-                ImportSpec is = null;
+
                 boolean flag = true;
                 while(flag) {
+                    ImportSpec is = null;
                     try {
                         is = importSpec(locPos);
                     }
@@ -222,8 +224,8 @@ public class SyntaxAnalyzer {
             ip.setString_lit(tokens.get(locPos).getLexeme());
 
             locPos++;
-            pos = locPos;
 
+            pos = locPos;
             return ip;
         }
 

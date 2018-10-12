@@ -64,4 +64,24 @@ class SyntaxAnalyzerTest {
         assertEquals(expectedAns, ans);
     }
 
+    @org.junit.jupiter.api.Test
+    void getSyntaxTree4() throws Exception {
+        StringBuilder code = new StringBuilder("package main\n" +
+                "import (identifier \"bufio\";)");
+        SyntaxAnalyzer syntaxAnalyzer = new SyntaxAnalyzer(code);
+        String ans = syntaxAnalyzer.getSyntaxTree().toJSON().toString();
+        String expectedAns = "{\n" +
+                "  PackageClause: {\n" +
+                "    PackageName: main\n" +
+                "  },\n" +
+                "  ImportDecl: {\n" +
+                "    ImportSpec: {\n" +
+                "      PackageName: identifier,\n" +
+                "      ImportPath: \"bufio\"\n" +
+                "    }\n" +
+                "  }\n" +
+                "}";
+        assertEquals(expectedAns, ans);
+    }
+
 }
