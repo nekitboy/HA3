@@ -13,7 +13,7 @@ public class PackageName extends SyntaxVariable {
 
     public void setIdentifier(String identifier) throws Exception {
         if (identifier == null)
-            throw new Exception("Syntax grammar error in `Identifier`");
+            throw new Exception("error in `Identifier`");
         this.identifier = identifier;
     }
 

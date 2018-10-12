@@ -37,14 +37,10 @@ public abstract class SyntaxVariable {
     protected static StringBuilder ArrayToJSON(ArrayList <SyntaxVariable> list) {
         StringBuilder str = new StringBuilder();
         if (!list.isEmpty()) {
-            /* str
-            type:
-             */
-            str.append(list.get(0).getType() + ": ");
 
             if (list.size()>1) {
                 /* str
-                type: [
+                [
 
                  */
                 str.append("[\n");
@@ -73,15 +69,15 @@ public abstract class SyntaxVariable {
             }
 
             /* str
-            type: substr
+            substr
              */
             str.append(substr);
 
             if (list.size()>1) {
                 /* str
-                type: [
-                    substr
-                 ]
+                [
+                substr
+                ]
                  */
                 str.append("\n]");
             }

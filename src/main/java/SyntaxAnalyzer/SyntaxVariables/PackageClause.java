@@ -14,7 +14,7 @@ public class PackageClause extends SyntaxVariable {
 
     public void setPackageName(PackageName packageName) throws Exception {
         if (packageName == null)
-            throw new Exception("Syntax grammar error in `PackageName`");
+            throw new Exception("error in `PackageName`");
         this.packageName = packageName;
     }
 

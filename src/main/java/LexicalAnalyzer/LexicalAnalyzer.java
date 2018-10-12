@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 public class LexicalAnalyzer {
     // Tokens
     public enum TypeOfToken {
-        Identifier, Keyword, Punctuation, Operator, Literal, Number, Comment, WhiteSpace, EOF
+        Identifier, Keyword, Punctuation, Operator, NewLine, StringLiteral, Number, Comment, WhiteSpace, EOF
     };
 
     public class Token {
@@ -48,7 +48,8 @@ public class LexicalAnalyzer {
     private String identRegexp = "[\\p{L}_][\\p{L}\\p{Nd}_]*";
     private String decimalRegexp = "\\d";
     private String hexDecimalDigitRegexp = "[\\da-fA-F]+";
-    private String spaceRegexp = "\\s+";
+    private String spaceRegexp = "\\h+";
+    private String newLinesRegexp = "\\n+";
     // Array  of all keywords in Golang
     private ArrayList<String> keywords = new ArrayList<String>(Arrays.asList("break", "default", "func", "interface",
             "select", "case", "defer", "goto", "go", "map", "struct", "chan", "else", "package", "switch",
@@ -81,7 +82,22 @@ public class LexicalAnalyzer {
         while (token == null || token.type != LexicalAnalyzer.TypeOfToken.EOF){
             // get next token
             token = nextToken();
-            if (token != null && token.type != LexicalAnalyzer.TypeOfToken.WhiteSpace) {
+
+            // Change newlines to ';'
+
+            if (token != null && (token.type == TypeOfToken.NewLine || token.type == TypeOfToken.EOF)){
+                if (!tokens.isEmpty() && (tokens.get(tokens.size()-1).lexeme.equals("++") ||
+                        tokens.get(tokens.size()-1).lexeme.equals("--") || tokens.get(tokens.size()-1).lexeme.equals(")") ||
+                        tokens.get(tokens.size()-1).lexeme.equals("]") || tokens.get(tokens.size()-1).lexeme.equals("}") ||
+                        tokens.get(tokens.size()-1).type.equals(TypeOfToken.Identifier) ||
+                        tokens.get(tokens.size()-1).lexeme.equals("++") || tokens.get(tokens.size()-1).lexeme.equals("break") ||
+                        tokens.get(tokens.size()-1).lexeme.equals("continue") || tokens.get(tokens.size()-1).lexeme.equals("fallthrough") ||
+                        tokens.get(tokens.size()-1).lexeme.equals("return") || tokens.get(tokens.size()-1).type.equals(TypeOfToken.Number) ||
+                        tokens.get(tokens.size()-1).type.equals(TypeOfToken.StringLiteral))) {
+                    tokens.add(new Token(TypeOfToken.Punctuation, ";"));
+                }
+            }
+            if (token != null && token.type != TypeOfToken.WhiteSpace && token.type != TypeOfToken.NewLine) {
                 tokens.add(token);
             }
             if(token == null)
@@ -98,6 +114,10 @@ public class LexicalAnalyzer {
 
         // Else - try parsing each token
         Token result = null;
+
+        result = parseNewLines();
+        if (result != null) return result;
+
         result = parseSpaces();
         if (result != null) return result;
 
@@ -201,6 +221,10 @@ public class LexicalAnalyzer {
     private Token parseKeywords(){
         return parseInList(keywords, TypeOfToken.Keyword);
     }
+    // Try parse newLines
+    private Token parseNewLines(){
+        return parseWithRegexp(newLinesRegexp, TypeOfToken.NewLine, pos);
+    }
     // Try parse whitespaces
     private Token parseSpaces(){
         return parseWithRegexp(spaceRegexp, TypeOfToken.WhiteSpace, pos);
@@ -223,7 +247,7 @@ public class LexicalAnalyzer {
                     str.append(line.charAt(locPos));
                     locPos++;
                     pos = locPos;
-                    return new Token(TypeOfToken.Literal, str.toString());
+                    return new Token(TypeOfToken.StringLiteral, str.toString());
                 }
                 // TODO check this logical expression. Is it real to end String literal without ending quote?
                 if (locPos<len && line.charAt(locPos) == '\n')
@@ -231,9 +255,9 @@ public class LexicalAnalyzer {
                     str.append(line.charAt(locPos));
                     locPos++;
                     pos = locPos;
-                    return new Token(TypeOfToken.Literal, str.toString());
+                    return new Token(TypeOfToken.StringLiteral, str.toString());
                 }
-                str.append(locPos);
+                str.append(line.charAt(locPos));
                 locPos++;
             }
         }else if (locPos<len && line.charAt(locPos) == '\''){
@@ -246,7 +270,7 @@ public class LexicalAnalyzer {
                     str.append(line.charAt(locPos));
                     locPos++;
                     pos = locPos;
-                    return new Token(TypeOfToken.Literal, str.toString());
+                    return new Token(TypeOfToken.StringLiteral, str.toString());
                 }
                 // TODO check this logical expression. Is it real to end String literal without ending quote?
                 if (locPos<len && line.charAt(locPos) == '\n')
@@ -254,7 +278,7 @@ public class LexicalAnalyzer {
                     str.append(line.charAt(locPos));
                     locPos++;
                     pos = locPos;
-                    return new Token(TypeOfToken.Literal, str.toString());
+                    return new Token(TypeOfToken.StringLiteral, str.toString());
                 }
                 str.append(line.charAt(locPos));
                 locPos++;
@@ -269,7 +293,7 @@ public class LexicalAnalyzer {
                     str.append(line.charAt(locPos));
                     locPos++;
                     pos = locPos;
-                    return new Token(TypeOfToken.Literal, str.toString());
+                    return new Token(TypeOfToken.StringLiteral, str.toString());
                 }
                 str.append(line.charAt(locPos));
                 locPos++;

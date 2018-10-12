@@ -21,20 +21,20 @@ public class SourceFile extends SyntaxVariable{
 
     public void setPackageClause(PackageClause packageClause) throws Exception {
         if (packageClause == null)
-            throw new Exception("Syntax grammar error in `PackageClause`");
+            throw new Exception("error in `PackageClause`");
         this.packageClause = packageClause;
     }
 
     public void addImportDecl(ImportDecl importDecl) throws Exception {
         if (importDecl == null) {
-            throw new Exception("Syntax grammar error in `ImportDecl`");
+            throw new Exception("error in `ImportDecl`");
         }
         this.importDecl.add(importDecl);
     }
 
     public void addTopLevelDecl (TopLevelDecl topLevelDecl) throws Exception {
         if (topLevelDecl == null) {
-            throw new Exception("Syntax grammar error in `TopLevelDecl`");
+            throw new Exception("error in `TopLevelDecl`");
         }
         this.topLevelDecl.add(topLevelDecl);
     }
@@ -59,17 +59,19 @@ public class SourceFile extends SyntaxVariable{
         if (!importDecl.isEmpty()) {
             /* content
             PackageClause: ... ,
-            ImportDecl: [
-                ... ,
-                ...
-            ]
+            ImportDecl:
              */
-            content.append(",\n");
+            content.append(",\nImportDecl: ");
+
+            /* content
+            PackageClause: ... ,
+            ImportDecl: [...]
+             */
             content.append(ArrayToJSON((ArrayList<SyntaxVariable>) (ArrayList<?>) importDecl));
         }
 
         if (!topLevelDecl.isEmpty()) {
-            content.append(",\n");
+            content.append(",\nTopLevelDecl: ");
             content.append(ArrayToJSON((ArrayList<SyntaxVariable>) (ArrayList<?>) topLevelDecl));
         }
 
