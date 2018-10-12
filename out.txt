@@ -1,0 +1,20 @@
+Keyword: for
+Punctuation: (
+Identifier: int
+Identifier: i
+Operator: =
+Number: 0
+Punctuation: ;
+Identifier: i
+Operator: <
+Number: 1
+Punctuation: ;
+Identifier: i
+Operator: ++
+Punctuation: )
+Punctuation: {
+Identifier: i
+Operator: ++
+Punctuation: ;
+Punctuation: }
+EOF: 
