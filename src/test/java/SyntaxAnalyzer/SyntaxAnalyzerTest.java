@@ -19,7 +19,7 @@ class SyntaxAnalyzerTest {
 
     @org.junit.jupiter.api.Test
     void getSyntaxTree2() throws Exception {
-        StringBuilder code = new StringBuilder("package main");
+        StringBuilder code = new StringBuilder("packae main");
         SyntaxAnalyzer syntaxAnalyzer = new SyntaxAnalyzer(code);
 
         assertThrows(Exception.class, () -> syntaxAnalyzer.getSyntaxTree());
@@ -54,9 +54,6 @@ class SyntaxAnalyzerTest {
                 "      },\n" +
                 "      {\n" +
                 "        ImportPath: \"os\"\n" +
-                "      },\n" +
-                "      {\n" +
-                "        ImportPath: \"os\"\n" +
                 "      }\n" +
                 "    ]\n" +
                 "  }\n" +
@@ -78,6 +75,34 @@ class SyntaxAnalyzerTest {
                 "    ImportSpec: {\n" +
                 "      PackageName: identifier,\n" +
                 "      ImportPath: \"bufio\"\n" +
+                "    }\n" +
+                "  }\n" +
+                "}";
+        assertEquals(expectedAns, ans);
+    }
+
+    @org.junit.jupiter.api.Test
+    void getSyntaxTree5() throws Exception {
+        StringBuilder code = new StringBuilder("package main;\n" +
+                "const a, b, c, d");
+        SyntaxAnalyzer syntaxAnalyzer = new SyntaxAnalyzer(code);
+        String ans = syntaxAnalyzer.getSyntaxTree().toJSON().toString();
+        String expectedAns = "{\n" +
+                "  PackageClause: {\n" +
+                "    PackageName: main\n" +
+                "  },\n" +
+                "  TopLevelDecl: {\n" +
+                "    Declaration: {\n" +
+                "      ConstDecl: {\n" +
+                "        ConstSpec: {\n" +
+                "          IdentifierList: [\n" +
+                "            a,\n" +
+                "            b,\n" +
+                "            c,\n" +
+                "            d\n" +
+                "          ]\n" +
+                "        }\n" +
+                "      }\n" +
                 "    }\n" +
                 "  }\n" +
                 "}";
