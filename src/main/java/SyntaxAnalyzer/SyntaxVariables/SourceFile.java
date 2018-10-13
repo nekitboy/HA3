@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 // SourceFile = PackageClause ";" { ImportDecl ";" } { TopLevelDecl ";" }
 
-public class SourceFile extends SyntaxVariable{
+public class SourceFile extends SyntaxVariable {
     static private final String type = "SourceFile";
 
     private PackageClause packageClause;

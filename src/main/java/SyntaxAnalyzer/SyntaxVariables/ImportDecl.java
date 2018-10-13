@@ -5,7 +5,7 @@ import SyntaxAnalyzer.SyntaxVariable;
 import java.util.ArrayList;
 
 // ImportDecl = "import" ( ImportSpec | "(" { ImportSpec ";" } ")" ) .
-public class ImportDecl extends SyntaxVariable{
+public class ImportDecl extends SyntaxVariable {
     private static final String type = "ImportDecl";
 
     private ArrayList <ImportSpec> importSpec;
