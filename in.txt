@@ -1,2 +1,2 @@
-package main;
-const a, b, c, d
+package main
+import (identifier "bufio";)

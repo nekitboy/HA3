@@ -85,34 +85,4 @@ public abstract class SyntaxVariable {
 
         return str;
     }
-
-    protected static StringBuilder StringArrayToJSON(ArrayList <String> list) {
-        StringBuilder str = new StringBuilder();
-        if (!list.isEmpty()) {
-
-            if (list.size()>1) {
-                str.append("[\n");
-            }
-
-            StringBuilder substr = new StringBuilder();
-
-            for (int i = 0; i<list.size(); i++) {
-                substr.append(list.get(i));
-                if (i+1 < list.size())
-                    substr.append(",\n");
-            }
-
-            if (list.size()>1) {
-                substr = tabulize(substr);
-            }
-
-            str.append(substr);
-
-            if (list.size()>1) {
-                str.append("\n]");
-            }
-        }
-
-        return str;
-    }
 }
