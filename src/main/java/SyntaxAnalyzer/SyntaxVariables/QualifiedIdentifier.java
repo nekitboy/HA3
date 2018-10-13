@@ -2,15 +2,19 @@ package SyntaxAnalyzer.SyntaxVariables;
 
 import SyntaxAnalyzer.SyntaxVariable;
 
-// ImportSpec   = [ "." | PackageName ] ImportPath .
-public class ImportSpec extends SyntaxVariable {
-    public static final String type = "ImportSpec";
-
+// QualifiedIdent = PackageName "." identifier .
+public class QualifiedIdentifier extends SyntaxVariable {
+    public static final String type = "QualifiedIdentifier";
     private PackageName packageName;
-    private ImportPath importPath;
-
-    public ImportSpec() {
+    private String identifier;
+    public QualifiedIdentifier() {
         super(type);
+    }
+
+    public void setIdentifier(String  identifier) throws Exception {
+        if (identifier == null)
+            throw new Exception("error in `Identifier`");
+        this.identifier = identifier;
     }
 
     public void setPackageName(PackageName packageName) throws Exception {
@@ -19,26 +23,21 @@ public class ImportSpec extends SyntaxVariable {
         this.packageName = packageName;
     }
 
-    public void setImportPath(ImportPath importPath) throws Exception {
-        if (importPath == null)
-            throw new Exception("error in `ImportPath`");
-        this.importPath = importPath;
-    }
-
     @Override
     public StringBuilder toJSON() {
         StringBuilder json = new StringBuilder();
         StringBuilder content = new StringBuilder();
 
         json.append("{\n");
-
+        if (identifier != null) {
+            content.append("Identifier: ");
+            content.append(identifier);
+        }
         if (packageName != null) {
+            content.append(",\n");
             content.append("PackageName: ");
             content.append(packageName.toJSON());
-            content.append(",\n");
         }
-        content.append("ImportPath: ");
-        content.append(importPath.toJSON());
 
         content = tabulize(content);
 

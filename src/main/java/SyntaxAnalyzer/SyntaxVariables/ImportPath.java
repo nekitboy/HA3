@@ -3,7 +3,7 @@ package SyntaxAnalyzer.SyntaxVariables;
 import SyntaxAnalyzer.SyntaxVariable;
 
 // ImportPath   = string_lit .
-public class ImportPath extends SyntaxVariable{
+public class ImportPath extends SyntaxVariable {
     static final String type = "ImportPath";
 
     private String string_lit;
