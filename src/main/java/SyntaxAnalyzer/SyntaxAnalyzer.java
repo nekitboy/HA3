@@ -2,7 +2,11 @@ package SyntaxAnalyzer;
 import LexicalAnalyzer.LexicalAnalyzer;
 import LexicalAnalyzer.LexicalAnalyzer.TypeOfToken;
 import SyntaxAnalyzer.SyntaxVariables.*;
+import com.sun.deploy.pings.Pings;
+import com.sun.xml.internal.bind.v2.TODO;
 
+import java.io.FileReader;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 public class SyntaxAnalyzer {
@@ -629,44 +633,657 @@ public class SyntaxAnalyzer {
         throw new Exception("Syntax grammar error. No `ArrayType` nor `StructType` nor `PointerType` nor `FunctionType` nor `InterfaceType` nor `SliceType` nor `MapType` nor `ChannelTyp` in `TypeLit`");
     }
 
-    private ChannelType channelType(int locPos) {
-        // TODO
-        return null;
+    // ChannelType = ( "chan" | "chan" "<-" | "<-" "chan" ) ElementType .
+    private ChannelType channelType(int locPos) throws Exception {
+        ChannelType ct = new ChannelType();
+
+        boolean flag = true;
+        try {
+            if (tokens.get(locPos).getType().equals(TypeOfToken.Keyword) && tokens.get(locPos).getLexeme().equals("chan")) {
+                locPos++;
+
+                if (tokens.get(locPos).getType().equals(TypeOfToken.Operator) && tokens.get(locPos).getLexeme().equals("<-")) {
+                    locPos++;
+                    flag = false;
+                }
+            }
+            else
+                throw new Exception("Syntax grammar error. No `chan` in `ChannelType`");
+        } catch (Exception e) {flag = true;}
+
+        if (flag) {
+            try {
+                if (tokens.get(locPos).getType().equals(TypeOfToken.Operator) && tokens.get(locPos).getLexeme().equals("<-")) {
+                    locPos++;
+
+                    if (tokens.get(locPos).getType().equals(TypeOfToken.Keyword) && tokens.get(locPos).getLexeme().equals("<-")) {
+                        locPos++;
+                        flag = false;
+                    }
+                    else
+                        throw new Exception("Syntax grammar error. No `chan` after `<-` in `ChannelType");
+                }
+                else
+                    throw new Exception("Syntax grammar error. No `<-` in `ChannelType`");
+            } catch (Exception e) {flag = true;}
+        }
+
+        if (!flag) {
+            ElementType et = null;
+            et = elementType(locPos);
+
+            if (et != null) {
+                locPos = pos;
+                ct.setElementType(et);
+                return ct;
+            }
+            throw new Exception("Syntax grammar error. No `ElementType` in `ChannelType`");
+        }
+        throw new Exception("Syntax grammar error. No `chan` nor `<- chan` nor `chan <-` in `ChannelType`");
     }
 
-    private FunctionType functionType(int locPos) {
-        //TODO
-        return null;
+    // FunctionType   = "func" Signature .
+    private FunctionType functionType(int locPos) throws Exception {
+        FunctionType ft = new FunctionType();
+
+        if (tokens.get(locPos).getType().equals(TypeOfToken.Keyword) && tokens.get(locPos).getLexeme().equals("func")) {
+            locPos++;
+
+            Signature s = null;
+            s = signature(locPos);
+
+            if (s != null) {
+                locPos = pos;
+                ft.setSignature(s);
+
+                return ft;
+            }
+            throw new Exception("Syntax grammar error. No `Signature` in `FunctionType`");
+        }
+        throw new Exception("Syntax grammar error. No `func` in `FunctionType`");
     }
 
-    private InterfaceType interfaceType(int locPos) {
-        //TODO
-        return null;
+    // Signature  = Parameters [ Result ] .
+    private Signature signature(int locPos) throws Exception {
+        Signature s = new Signature();
+
+        Parameters p = null;
+        p = parameters(locPos);
+
+        if (p != null) {
+            locPos = pos;
+            s.setParameters(p);
+
+            try {
+                Result r = null;
+                r = result(locPos);
+
+                if (r != null) {
+                    locPos = pos;
+                    s.setResult(r);
+                }
+                else
+                    throw new Exception("Syntax grammar error. No `Result` in `Signature`");
+            }
+            catch (Exception e) {}
+
+            pos = locPos;
+            return s;
+        }
+        throw new Exception("Syntax grammar error. No `Parameters` in `Signature");
     }
 
-    private SliceType sliceType(int locPos) {
-        //TODO
-        return null;
+    //Result    = Parameters | Type .
+    private Result result(int locPos) throws Exception {
+        Result r = new Result();
+
+        try {
+            Parameters p = null;
+            p = parameters(locPos);
+
+            if (p != null) {
+                locPos = pos;
+                r.setParameters(p);
+
+                return r;
+            }
+            else
+                throw new Exception("Syntax grammar error. No `Parameters` in `Result`");
+        } catch (Exception e) {}
+
+        Type t = null;
+        t = type(locPos);
+
+        if (t != null) {
+            locPos = pos;
+            r.setType_(t);
+
+            return r;
+        }
+        throw new Exception("Syntax grammar error. No `Type` in `Result`");
     }
 
-    private MapType mapType(int locPos) {
-        //TODO
-        return null;
+    // Parameters  = "(" [ ParameterList [ "," ] ] ")" .
+    private Parameters parameters(int locPos) throws Exception {
+        Parameters p = new Parameters();
+
+        if (tokens.get(locPos).getType().equals(TypeOfToken.Punctuation) && tokens.get(locPos).getLexeme().equals("(")) {
+            locPos++;
+
+            ParameterList pl = null;
+            try {
+                pl = parameterList(locPos);
+                if (pl != null) {
+                    locPos = pos;
+                    p.setParameterList(pl);
+
+                    if (tokens.get(locPos).getType().equals(TypeOfToken.Punctuation) && tokens.get(locPos).getLexeme().equals(",")) {
+                        locPos++;
+                    }
+                }
+                else
+                    throw new Exception("Syntax grammar error. No `ParameterList` in `Parameters`");
+            }
+            catch (Exception e) {}
+
+            if (tokens.get(locPos).getType().equals(TypeOfToken.Punctuation) && tokens.get(locPos).getLexeme().equals(")")) {
+                locPos++;
+
+                pos = locPos;
+                return p;
+            }
+            throw new Exception("Syntax grammar error. No `)` in `Parameters`");
+        }
+        throw new Exception("Syntax grammar error. No `(` in `Parameters`");
     }
 
-    private PointerType pointerType(int locPos) {
-        // TODO
-        return null;
+    // ParameterList  = ParameterDecl { "," ParameterDecl } .
+    private ParameterList parameterList(int locPos) throws Exception {
+        ParameterList pl = new ParameterList();
+
+        ParameterDecl pd = null;
+        pd = parameterDecl(locPos);
+
+        if (pd != null) {
+            pl.addParameterDecl(pd);
+            locPos = pos;
+
+            boolean flag = true;
+            while (flag) {
+                pd = null;
+                try {
+                    pd = parameterDecl(locPos);
+                    if (pd != null) {
+                        locPos = pos;
+                        pl.addParameterDecl(pd);
+                    }
+                    else
+                        throw new Exception("Syntax grammar error. No `ParameterDecl`");
+                }
+                catch (Exception e) {
+                    flag = false;
+                }
+            }
+
+            pos = locPos;
+            return pl;
+        }
+        throw new Exception("Syntax grammar error. No `ParameterDecl` in `ParameterList`");
     }
 
-    private StructType structType(int locPos) {
-        // TODO
-        return null;
+    // ParameterDecl  = [ IdentifierList ] [ "..." ] Type .
+    private ParameterDecl parameterDecl(int locPos) throws Exception {
+        ParameterDecl pd = new ParameterDecl();
+
+        try {
+            IdentifierList il = null;
+            il = identifierList(locPos);
+            if (il != null) {
+                locPos = pos;
+                pd.setIdentifierList(il);
+            }
+        } catch (Exception e) {}
+
+        try {
+            if (tokens.get(locPos).getType().equals(TypeOfToken.Punctuation) && tokens.get(locPos).getLexeme().equals("...")) {
+               locPos++;
+            }
+        }
+        catch (Exception e) {}
+
+        Type t = null;
+        t = type(locPos);
+        if (t != null) {
+            locPos = pos;
+            pd.setType_(t);
+
+            return pd;
+        }
+
+        throw new Exception("Syntax grammar error. No `Type` in `ParameterDecl`");
     }
 
-    private ArrayType arrayType(int locPos) {
-        // TODO
-        return null;
+    // InterfaceType  = "interface" "{" { MethodSpec ";" } "}" .
+    private InterfaceType interfaceType(int locPos) throws Exception {
+        InterfaceType it = new InterfaceType();
+
+        if (tokens.get(locPos).getType().equals(TypeOfToken.Keyword) && tokens.get(locPos).equals("interface")) {
+            locPos++;
+
+            if (tokens.get(locPos).getType().equals(TypeOfToken.Punctuation) && tokens.get(locPos).getLexeme().equals("{")) {
+                locPos++;
+
+                boolean flag = true;
+                while(flag) {
+                    MethodSpec ms = null;
+                    try {
+                        ms = methodSpec(locPos);
+                        if (ms != null) {
+                            locPos = pos;
+                            it.addMethodSpec(ms);
+
+                            if (tokens.get(locPos).getType().equals(TypeOfToken.Punctuation) && tokens.get(locPos).getLexeme().equals(";")) {
+                                locPos++;
+                            }
+                            else
+                                throw new Exception("Syntax grammar error. No `;` after `MethodSpec` in `InterfaceDecl");
+                        }
+                        else
+                            throw new Exception("Syntax grammar error. No MethodSpec` in `InterfaceType`");
+                    }
+                    catch (Exception e) {
+                        flag = false;
+                    }
+                }
+
+                if (tokens.get(locPos).getType().equals(TypeOfToken.Punctuation) && tokens.get(locPos).getLexeme().equals("}")) {
+                    locPos++;
+                    pos = locPos;
+                    return it;
+                }
+            }
+            throw new Exception("Suntax grammar error. No `{` after `interface` in `InterfaceType`");
+        }
+        throw new Exception("Syntax grammar error. No `interface` in `InterfaceType`");
+    }
+
+    // MethodSpec   = MethodName Signature | InterfaceTypeName .
+    private MethodSpec methodSpec(int locPos) throws Exception {
+        MethodSpec ms = new MethodSpec();
+
+        int tempLoc = locPos;
+        try {
+            MethodName mn = null;
+            mn = methodName(tempLoc);
+
+            if (mn != null) {
+                tempLoc = pos;
+
+                Signature s = null;
+                s = signature(tempLoc);
+
+                if (s != null) {
+                    tempLoc = pos;
+                    ms.setMethodName(mn);
+                    ms.setSignature(s);
+
+                    return ms;
+                }
+                throw new Exception("Syntax grammar error. No `Signature` after `MethodName` in `MethodSpec`");
+            }
+            throw new Exception("Syntax grammar error. No `MethodName` in `MethodSpec`");
+
+        } catch (Exception e) {}
+
+        InterfaceTypeName itn = null;
+        itn = interfaceTypeName(locPos);
+
+        if (itn != null) {
+            locPos = pos;
+
+            ms.setInterfaceTypeName(itn);
+            return ms;
+        }
+        throw new Exception("Syntax grammar error. No `InterfaceTypeName` in `MethodSpec`");
+    }
+
+    // InterfaceTypeName  = TypeName .
+    private InterfaceTypeName interfaceTypeName(int locPos) throws Exception {
+        InterfaceTypeName itn = new InterfaceTypeName();
+
+        TypeName tn = null;
+        tn = typeName(locPos);
+
+        if (tn != null) {
+            locPos = pos;
+            itn.setTypeName(tn);
+            return itn;
+        }
+        throw new Exception("Syntax grammar error. No `TypeName` in `InterfaceTypeName`");
+    }
+
+    // MethodName   = identifier .
+    private MethodName methodName(int locPos) throws Exception {
+        MethodName mn = new MethodName();
+
+        if (tokens.get(locPos).getType().equals(TypeOfToken.Identifier)) {
+            mn.setIdentifier(tokens.get(locPos).getLexeme());
+            locPos++;
+
+            pos = locPos;
+            return mn;
+        }
+        throw new Exception("Syntax grammar error. No `identifier` in `MethodName`");
+    }
+
+    // SliceType = "[" "]" ElementType .
+    private SliceType sliceType(int locPos) throws Exception {
+        SliceType st = new SliceType();
+
+        if (tokens.get(locPos).getType().equals(TypeOfToken.Punctuation) && tokens.get(locPos).getLexeme().equals("[")) {
+            locPos++;
+
+            if (tokens.get(locPos).getType().equals(TypeOfToken.Punctuation) && tokens.get(locPos).getLexeme().equals("]")) {
+                locPos++;
+
+                ElementType et = null;
+                et = elementType(locPos);
+
+                if (et != null) {
+                    locPos = pos;
+                    st.setElementType(et);
+                    return st;
+                }
+                throw new Exception("Syntax grammar error. No `ElementType` in `SliceType`");
+            }
+            throw new Exception("Syntax grammar error. No `]` after `[` in `SliceType`");
+        }
+        throw new Exception("Syntax grammar error. No `[` in `SliceType`");
+    }
+
+    // MapType  = "map" "[" KeyType "]" ElementType .
+    private MapType mapType(int locPos) throws Exception {
+        MapType mt = new MapType();
+
+        if (tokens.get(locPos).getType().equals(TypeOfToken.Keyword) && tokens.get(locPos).getLexeme().equals("map")) {
+            locPos++;
+
+            if (tokens.get(locPos).getType().equals(TypeOfToken.Punctuation) && tokens.get(locPos).getLexeme().equals("[")) {
+                locPos++;
+
+                KeyType kt = null;
+                kt = keyType(locPos);
+
+                if (kt != null) {
+                    locPos = pos;
+                    mt.setKeyType(kt);
+
+                    if (tokens.get(locPos).getType().equals(TypeOfToken.Punctuation) && tokens.get(locPos).getLexeme().equals("]")) {
+                        locPos++;
+
+                        ElementType et = null;
+                        et = elementType(locPos);
+                        if (et != null) {
+                            locPos = pos;
+                            mt.setElementType(et);
+                            return mt;
+                        }
+                        throw new Exception("Syntax grammar error. No `ElementType` in `MapType`");
+                    }
+                    throw new Exception("Syntax grammar error. No `]` after `[` `KryType` in `MapType`");
+                }
+                throw new Exception("Syntax grammar error. No `KeyType` in `MapType`");
+            }
+            throw new Exception("Syntax grammar error. No `[` after `map` in `MapType`");
+        }
+        throw new Exception("Syntax grammar error. No `map` in `MapType`");
+    }
+
+    // KeyType  = Type .
+    private KeyType keyType(int locPos) throws Exception {
+        KeyType kt = new KeyType();
+
+        Type t = null;
+        t = type(locPos);
+        if (t != null) {
+            locPos = pos;
+            kt.setType_(t);
+            return kt;
+        }
+        throw new Exception("Syntax grammar error. No `Type` in `KeyType`");
+    }
+
+    // PointerType = "*" BaseType .
+    private PointerType pointerType(int locPos) throws Exception {
+        PointerType pt = new PointerType();
+
+        if (tokens.get(locPos).getType().equals(TypeOfToken.Operator) && tokens.get(locPos).getLexeme().equals("*")) {
+            locPos++;
+
+            BaseType bs = null;
+            bs = baseType(locPos);
+
+            if (bs != null) {
+                locPos = pos;
+                pt.setBaseType(bs);
+
+                return pt;
+            }
+            throw new Exception("Syntax grammar error. No `BaseType` after `*` in `PointerType`");
+        }
+        throw new Exception("Syntax grammar error. No `*` in `PointerType`");
+    }
+
+    // BaseType  = Type .
+    private BaseType baseType(int locPos) throws Exception {
+        BaseType bt = new BaseType();
+
+        Type t = type(locPos);
+        if (t != null) {
+            locPos = pos;
+            bt.setType_(t);
+            return bt;
+        }
+        throw new Exception("Syntax gramar error. No `Type` in `BaseType`");
+    }
+
+    // StructType  = "struct" "{" { FieldDecl ";" } "}" .
+    private StructType structType(int locPos) throws Exception {
+        StructType st = new StructType();
+
+        if (tokens.get(locPos).getType().equals(TypeOfToken.Keyword) && tokens.get(locPos).getLexeme().equals("struct")) {
+            locPos++;
+
+            if (tokens.get(locPos).getType().equals(TypeOfToken.Punctuation) && tokens.get(locPos).getLexeme().equals("{")) {
+                locPos++;
+
+                boolean flag = true;
+                while (flag) {
+                    FieldDecl fd = null;
+                    try {
+                        fd = fieldDecl(locPos);
+                    }
+                    catch (Exception e) {
+                        flag = false;
+                    }
+                    finally {
+                        if (fd != null) {
+                            locPos = pos;
+                            st.addFieldDecl(fd);
+
+                            if (tokens.get(locPos).getType().equals(TypeOfToken.Punctuation) && tokens.get(locPos).getLexeme().equals(";")) {
+                                locPos++;
+                            }
+                            else
+                                throw new Exception("Syntax grammar error. No `;` after `FieldDecl` in `StructType`");
+                        }
+                    }
+                }
+
+                if (tokens.get(locPos).getType().equals(TypeOfToken.Punctuation) && tokens.get(locPos).getLexeme().equals("}")) {
+                    locPos++;
+
+                    pos = locPos;
+                    return st;
+                }
+                throw new Exception("Syntax grammar error. No `}` after `{` { `FieldDecl` } in `StructType`");
+            }
+            throw new Exception("Syntax grammar error. No `{` after `struct` in `StructType`");
+        }
+        throw new Exception("Syntax grammar error. No `struct` in `StructType");
+    }
+
+    // FieldDecl  = (IdentifierList Type | EmbeddedField) [ Tag ] .
+    private FieldDecl fieldDecl(int locPos) throws Exception {
+        FieldDecl fd = new FieldDecl();
+
+        boolean flag = true;
+        IdentifierList il = null;
+        try {
+            il = identifierList(locPos);
+        } catch (Exception e) {}
+        finally {
+            if (il != null) {
+                flag = false;
+                locPos = pos;
+                fd.setIdentifierList(il);
+
+                Type t = null;
+                t = type(locPos);
+                if (t != null) {
+                    locPos = pos;
+                    fd.setType_(t);
+                }
+                else {
+                    throw new Exception("Syntax grammar error. No `Type` after `IdentifierList` in `FieldDecl`");
+                }
+            }
+            else {
+                throw new Exception("Syntax grammar error. No `IdentifierList` in `FieldDecl`");
+            }
+        }
+
+        if (flag) {
+            EmbeddedField ef = null;
+            ef = embeddedField(locPos);
+
+            if (ef != null) {
+                locPos = pos;
+                fd.setEmbeddedField(ef);
+            }
+            else {
+                throw new Exception("Syntax grammar error. No `EmbeddedField` in `FieldDecl`");
+            }
+        }
+
+        try {
+            Tag t = null;
+            t = tag(locPos);
+
+            if (t != null) {
+                fd.setTag(t);
+            }
+        }
+        catch (Exception e) {}
+
+        pos = locPos;
+        return fd;
+    }
+
+    // Tag  = string_lit .
+    private Tag tag(int locPos) throws Exception {
+        Tag t = new Tag();
+
+        if (tokens.get(locPos).getType().equals(TypeOfToken.StringLiteral)) {
+            t.setString_lit(tokens.get(locPos).getLexeme());
+            locPos++;
+
+            pos = locPos;
+            return t;
+        }
+        throw new Exception("Syntax grammar error. No `string_lit` in `Tag`");
+    }
+
+    // EmbeddedField = [ "*" ] TypeName .
+    private EmbeddedField embeddedField(int locPos) throws Exception {
+        EmbeddedField ef = new EmbeddedField();
+
+        try {
+            if (tokens.get(locPos).getType().equals(TypeOfToken.Operator) && tokens.get(locPos).getLexeme().equals("*")) {
+                locPos++;
+            }
+            else
+                throw new Exception("Syntax grammar error. No `*` in `EmbeddedField`");
+        } catch (Exception e) {}
+
+        TypeName tn = null;
+        tn = typeName(locPos);
+
+        if (tn != null) {
+            locPos = pos;
+            ef.setTypeName(tn);
+
+            return ef;
+        }
+        throw new Exception("Syntax grammar error. No `TypeName` in `EmbeddedField`");
+    }
+
+    // ArrayType   = "[" ArrayLength "]" ElementType .
+    private ArrayType arrayType(int locPos) throws Exception {
+        ArrayType at = new ArrayType();
+
+        if (tokens.get(locPos).getType().equals(TypeOfToken.Punctuation) && tokens.get(locPos).getLexeme().equals("[")) {
+            locPos++;
+
+            ArrayLength al = arrayLength(locPos);
+            if (al != null) {
+                locPos = pos;
+                at.setArrayLength(al);
+
+                if (tokens.get(locPos).getType().equals(TypeOfToken.Punctuation) && tokens.get(locPos).getLexeme().equals("]")) {
+                    locPos++;
+
+                    ElementType et = elementType(locPos);
+                    if (et != null) {
+                        at.setElementType(et);
+                        locPos = pos;
+
+                        return at;
+                    }
+                    throw new Exception("Syntax grammar error. No `ElementType` in `ArrayType`");
+                }
+                throw new Exception("Syntax grammar error. No `]` after `[` `ArrayLength` in `ArrayType`");
+            }
+            throw new Exception("Syntax grammar error. No `ArrayLength` after `[` in `ArrayType`");
+        }
+        throw new Exception("Syntax grammar error. No `[` in `ArrayType`");
+    }
+
+    // ElementType = Type .
+    private ElementType elementType(int locPos) throws Exception {
+        ElementType et = new ElementType();
+
+        Type t = type(locPos);
+        if (t != null) {
+            locPos = pos;
+            et.setType_(t);
+            return et;
+        }
+        throw new Exception("Syntax gramar error. No `Type` in `ElementType`");
+    }
+
+    // ArrayLength = Expression .
+    private ArrayLength arrayLength(int locPos) throws Exception {
+        ArrayLength al = new ArrayLength();
+
+        Expression e = expression(locPos);
+        if (e != null) {
+            locPos = pos;
+            al.setExpression(e);
+
+            return al;
+        }
+        throw new Exception("Syntax grammar error. No `Expression` in `ArrayLength`");
     }
 
     // ExpressionList = Expression { "," Expression } .

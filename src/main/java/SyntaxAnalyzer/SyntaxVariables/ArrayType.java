@@ -13,6 +13,18 @@ public class ArrayType extends SyntaxVariable {
         super(type);
     }
 
+    public void setArrayLength(ArrayLength arrayLength) throws Exception {
+        if (arrayLength == null)
+            throw new Exception("`ArrayLength` is nul");
+        this.arrayLength = arrayLength;
+    }
+
+    public void setElementType(ElementType elementType) throws Exception {
+        if (elementType == null)
+            throw new Exception("`ElementType` is null");
+        this.elementType = elementType;
+    }
+
     @Override
     public StringBuilder toJSON() {
         StringBuilder json = new StringBuilder();
