@@ -2,7 +2,7 @@ package SyntaxAnalyzer.SyntaxVariables;
 
 import SyntaxAnalyzer.SyntaxVariable;
 
-// Expression = UnaryExpr | Expression binary_op Expression .
+// Expression = UnaryExpr | UnaryExpr binary_op Expression .
 public class Expression extends SyntaxVariable {
     static final String type = "Expression";
     private UnaryExpr unaryExpr;
@@ -29,5 +29,30 @@ public class Expression extends SyntaxVariable {
         if (binary_op == null)
             throw new Exception("error in `Binary_op`");
         this.binary_op = binary_op;
+    }
+
+    @Override
+    public StringBuilder toJSON() {
+        StringBuilder json = new StringBuilder();
+        StringBuilder content = new StringBuilder();
+
+        json.append("{\n");
+        content.append("UnaryExpr: ");
+        content.append(unaryExpr.toJSON());
+        if (binary_op != null) {
+            content.append(",\n");
+            content.append("Binary_op: ");
+            content.append(binary_op.toJSON());
+
+            content.append(",\n");
+            content.append("Expression: ");
+            content.append(expression.toJSON());
+        }
+
+        content = tabulize(content);
+
+        json.append(content);
+        json.append("\n}");
+        return json;
     }
 }

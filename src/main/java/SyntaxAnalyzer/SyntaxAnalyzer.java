@@ -316,10 +316,12 @@ public class SyntaxAnalyzer {
     }
 
     private FunctionDecl functionDecl(int locPos) throws Exception {
+        //TODO
         return null;
     }
 
     private MethodDecl methodDecl(int locPos) throws Exception{
+        // TODO
         return null;
     }
 
@@ -540,6 +542,7 @@ public class SyntaxAnalyzer {
             at = arrayType(locPos);
             if (at != null) {
                 locPos = pos;
+                // TODO: not pos = locPos ???
                 tl.setArrayType(at);
                 return tl;
             }
@@ -705,7 +708,7 @@ public class SyntaxAnalyzer {
         throw new Exception("Syntax grammar error. No `Expression` in `ExpressionList`");
     }
 
-    // Expression = UnaryExpr | Expression binary_op Expression .
+    // Expression = UnaryExpr | UnaryExpr binary_op Expression .
     private Expression expression(int locPos) throws Exception{
         Expression ex = new Expression();
         UnaryExpr unaryExpr = null;
@@ -716,16 +719,6 @@ public class SyntaxAnalyzer {
             if (unaryExpr != null) {
                 locPos = pos;
                 ex.setUnaryExpr(unaryExpr);
-                return ex;
-            }
-        }
-
-        try{
-            Expression exp = null;
-            exp = expression(locPos);
-            if (exp != null){
-                ex.setExpression(exp);
-                locPos = pos;
 
                 Binary_op bo = null;
                 bo = binary_op(locPos);
@@ -733,21 +726,20 @@ public class SyntaxAnalyzer {
                     ex.setBinary_op(bo);
                     locPos = pos;
 
-                    exp = null;
+                    Expression exp = null;
                     exp = expression(locPos);
                     if (exp != null){
                         ex.setExpression(exp);
-                        locPos = pos;
+                        pos = locPos;
                         return ex;
                     }
-                    throw new Exception("Syntax grammar error. No `Expression` after `Expression binary_op` in `Expression`");
+                    throw new Exception("Syntax grammar error. No `Expression` after `UnaryExpr binary_op` in `Expression`");
                 }
-                throw new Exception("Syntax grammar error. No `binary_op` in `Expression binary_op Expression` in `Expression`");
+                pos = locPos;
+                return ex;
             }
-            throw new Exception("Syntax grammar error. No `Expression` before `binary_op Expression` in `Expression`");
-        }catch (Exception e){
+            throw new Exception("Syntax grammar error. No `UnaryExpr` nor `UnaryExpr binary_op Expression` in `Expression`");
         }
-        throw new Exception("Syntax grammar error. No `UnaryExpr` nor `Expression binary_op Expression` in `Expression`");
     }
 
     // binary_op  = "||" | "&&" | rel_op | add_op | mul_op .
@@ -757,6 +749,100 @@ public class SyntaxAnalyzer {
 
     // UnaryExpr  = PrimaryExpr | unary_op UnaryExpr .
     private UnaryExpr unaryExpr(int locPos) throws Exception {
+        UnaryExpr uef = new UnaryExpr();
+        PrimaryExpr pe = null;
+        try{
+            pe = primaryExpr(locPos);
+        }catch (Exception e){
+        }finally {
+            if (pe != null){
+                uef.setPrimaryExpr(pe);
+                pos = locPos;
+                return uef;
+            }
+        }
+
+        Unary_op uo = null;
+        try{
+            uo = unary_op(locPos);
+        }catch (Exception e){
+        }finally {
+            if (uo != null){
+                uef.setUnary_op(uo);
+                locPos = pos;
+
+                UnaryExpr ue = null;
+                ue = unaryExpr(locPos);
+                if (ue != null){
+                    uef.setUnaryExpr(ue);
+                    pos = locPos;
+                    return uef;
+                }
+                throw new Exception("Syntax grammar error. No `UnaryExpr` after `unary_op` in `unary_op UnaryExpr`");
+            }
+        }
+        throw new Exception("Syntax grammar error. No `PrimaryExpr` nor `unary_op UnaryExpr` in `UnaryExpr`");
+    }
+
+    private Unary_op unary_op(int locPos) throws Exception{
+        // TODO
+        return null;
+    }
+
+    // PrimaryExpr: (Operand | Conversion | MethodExpr) { Selector | Index | Slice | TypeAssertion | Argument } .
+    private PrimaryExpr primaryExpr(int locPos) throws Exception{
+        PrimaryExpr pe = new PrimaryExpr();
+
+        Operand op = null;
+        try {
+            op = operand(locPos);
+        } catch (Exception e) {
+        } finally {
+            if (op != null) {
+                locPos = pos;
+                pe.setOperand(op);
+            }else{
+                Conversion c = null;
+                try {
+                    c = conversion(locPos);
+                } catch (Exception e) {
+                } finally {
+                    if (c != null) {
+                        locPos = pos;
+                        pe.setConversion(c);
+                    }else{
+                        MethodExpr me = null;
+                        try {
+                            me = methodExpr(locPos);
+                        } catch (Exception e) {
+                        } finally {
+                            if (me != null) {
+                                locPos = pos;
+                                pe.setMethodExpr(me);
+                            }
+                            throw new Exception("Syntax grammar error. No `Operand` nor `Conversion` nor `MethodExpr` in `PrimaryExpr`");
+                        }
+                    }
+                }
+            }
+        }
+
+        // TODO: parse { Selector | Index | Slice | TypeAssertion | Argument }
+        return null;
+    }
+
+    private MethodExpr methodExpr(int locPos) throws Exception{
+        // TODO
+        return null;
+    }
+
+    private Conversion conversion(int locPos) throws Exception{
+        // TODO
+        return null;
+    }
+
+    private Operand operand(int locPos) throws Exception {
+        // TODO
         return null;
     }
 
