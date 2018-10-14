@@ -744,7 +744,291 @@ public class SyntaxAnalyzer {
 
     // binary_op  = "||" | "&&" | rel_op | add_op | mul_op .
     private Binary_op binary_op(int locPos) throws Exception{
-        return null;
+        Binary_op bo = new Binary_op();
+
+        try {
+            String op = null;
+            if (tokens.get(locPos).getType().equals(TypeOfToken.Operator) && tokens.get(locPos).getLexeme().equals("||")){
+                op = tokens.get(locPos).getLexeme();
+                locPos++;
+                pos = locPos;
+                bo.setOp(op);
+                return bo;
+            }
+        }
+        catch (Exception e) {}
+
+        try {
+            String op = null;
+            if (tokens.get(locPos).getType().equals(TypeOfToken.Operator) && tokens.get(locPos).getLexeme().equals("&&")){
+                op = tokens.get(locPos).getLexeme();
+                locPos++;
+                pos = locPos;
+                bo.setOp(op);
+                return bo;
+            }
+        }
+        catch (Exception e) {}
+
+        try {
+            Rel_op ro = null;
+            ro = rel_op(locPos);
+            if (ro != null) {
+                locPos = pos;
+                bo.setRel_op(ro);
+                return bo;
+            }
+        }
+        catch (Exception e) {}
+
+        try {
+            Add_op ao = null;
+            ao = add_op(locPos);
+            if (ao != null) {
+                locPos = pos;
+                bo.setAdd_op(ao);
+                return bo;
+            }
+        }
+        catch (Exception e) {}
+
+        try {
+            Mul_op mo = null;
+            mo = mul_op(locPos);
+            if (mo != null) {
+                locPos = pos;
+                bo.setMul_op(mo);
+                return bo;
+            }
+        }
+        catch (Exception e) {}
+
+        throw new Exception("Syntax grammar error. No \"||\" nor \"&&\" nor `Rel_op` nor `Add_op` nor `Mul_op` in `Binary_op`");
+    }
+
+    // mul_op     = "*" | "/" | "%" | "<<" | ">>" | "&" | "&^" .
+    private Mul_op mul_op(int locPos) throws Exception {
+        Mul_op mo = new Mul_op();
+
+        try {
+            String op = null;
+            if (tokens.get(locPos).getType().equals(TypeOfToken.Operator) && tokens.get(locPos).getLexeme().equals("*")){
+                op = tokens.get(locPos).getLexeme();
+                locPos++;
+                pos = locPos;
+                mo.setOp(op);
+                return mo;
+            }
+        }
+        catch (Exception e) {}
+
+        try {
+            String op = null;
+            if (tokens.get(locPos).getType().equals(TypeOfToken.Operator) && tokens.get(locPos).getLexeme().equals("/")){
+                op = tokens.get(locPos).getLexeme();
+                locPos++;
+                pos = locPos;
+                mo.setOp(op);
+                return mo;
+            }
+        }
+        catch (Exception e) {}
+
+        try {
+            String op = null;
+            if (tokens.get(locPos).getType().equals(TypeOfToken.Operator) && tokens.get(locPos).getLexeme().equals("%")){
+                op = tokens.get(locPos).getLexeme();
+                locPos++;
+                pos = locPos;
+                mo.setOp(op);
+                return mo;
+            }
+        }
+        catch (Exception e) {}
+
+        try {
+            String op = null;
+            if (tokens.get(locPos).getType().equals(TypeOfToken.Operator) && tokens.get(locPos).getLexeme().equals("<<")){
+                op = tokens.get(locPos).getLexeme();
+                locPos++;
+                pos = locPos;
+                mo.setOp(op);
+                return mo;
+            }
+        }
+        catch (Exception e) {}
+
+        try {
+            String op = null;
+            if (tokens.get(locPos).getType().equals(TypeOfToken.Operator) && tokens.get(locPos).getLexeme().equals(">>")){
+                op = tokens.get(locPos).getLexeme();
+                locPos++;
+                pos = locPos;
+                mo.setOp(op);
+                return mo;
+            }
+        }
+        catch (Exception e) {}
+
+        try {
+            String op = null;
+            if (tokens.get(locPos).getType().equals(TypeOfToken.Operator) && tokens.get(locPos).getLexeme().equals("&")){
+                op = tokens.get(locPos).getLexeme();
+                locPos++;
+                pos = locPos;
+                mo.setOp(op);
+                return mo;
+            }
+        }
+        catch (Exception e) {}
+
+        try {
+            String op = null;
+            if (tokens.get(locPos).getType().equals(TypeOfToken.Operator) && tokens.get(locPos).getLexeme().equals("&^")){
+                op = tokens.get(locPos).getLexeme();
+                locPos++;
+                pos = locPos;
+                mo.setOp(op);
+                return mo;
+            }
+        }
+        catch (Exception e) {}
+
+        throw new Exception("Syntax grammar error. No \"*\" | \"/\" | \"%\" | \"<<\" | \">>\" | \"&\" | \"&^\" in `Mul_op`");
+    }
+
+    // add_op     = "+" | "-" | "|" | "^" .
+    private Add_op add_op(int locPos) throws Exception {
+        Add_op ao = new Add_op();
+
+        try {
+            String op = null;
+            if (tokens.get(locPos).getType().equals(TypeOfToken.Operator) && tokens.get(locPos).getLexeme().equals("+")){
+                op = tokens.get(locPos).getLexeme();
+                locPos++;
+                pos = locPos;
+                ao.setOp(op);
+                return ao;
+            }
+        }
+        catch (Exception e) {}
+
+        try {
+            String op = null;
+            if (tokens.get(locPos).getType().equals(TypeOfToken.Operator) && tokens.get(locPos).getLexeme().equals("-")){
+                op = tokens.get(locPos).getLexeme();
+                locPos++;
+                pos = locPos;
+                ao.setOp(op);
+                return ao;
+            }
+        }
+        catch (Exception e) {}
+
+        try {
+            String op = null;
+            if (tokens.get(locPos).getType().equals(TypeOfToken.Operator) && tokens.get(locPos).getLexeme().equals("|")){
+                op = tokens.get(locPos).getLexeme();
+                locPos++;
+                pos = locPos;
+                ao.setOp(op);
+                return ao;
+            }
+        }
+        catch (Exception e) {}
+
+        try {
+            String op = null;
+            if (tokens.get(locPos).getType().equals(TypeOfToken.Operator) && tokens.get(locPos).getLexeme().equals("^")){
+                op = tokens.get(locPos).getLexeme();
+                locPos++;
+                pos = locPos;
+                ao.setOp(op);
+                return ao;
+            }
+        }
+        catch (Exception e) {}
+
+        throw new Exception("Syntax grammar error. No \"+\" | \"-\" | \"|\" | \"^\" in `Add_op`");
+    }
+
+    // rel_op     = "==" | "!=" | "<" | "<=" | ">" | ">=" .
+    private Rel_op rel_op(int locPos) throws Exception {
+        Rel_op bo = new Rel_op();
+
+        try {
+            String op = null;
+            if (tokens.get(locPos).getType().equals(TypeOfToken.Operator) && tokens.get(locPos).getLexeme().equals("==")){
+                op = tokens.get(locPos).getLexeme();
+                locPos++;
+                pos = locPos;
+                bo.setOp(op);
+                return bo;
+            }
+        }
+        catch (Exception e) {}
+
+        try {
+            String op = null;
+            if (tokens.get(locPos).getType().equals(TypeOfToken.Operator) && tokens.get(locPos).getLexeme().equals("!=")){
+                op = tokens.get(locPos).getLexeme();
+                locPos++;
+                pos = locPos;
+                bo.setOp(op);
+                return bo;
+            }
+        }
+        catch (Exception e) {}
+
+        try {
+            String op = null;
+            if (tokens.get(locPos).getType().equals(TypeOfToken.Operator) && tokens.get(locPos).getLexeme().equals("<")){
+                op = tokens.get(locPos).getLexeme();
+                locPos++;
+                pos = locPos;
+                bo.setOp(op);
+                return bo;
+            }
+        }
+        catch (Exception e) {}
+
+        try {
+            String op = null;
+            if (tokens.get(locPos).getType().equals(TypeOfToken.Operator) && tokens.get(locPos).getLexeme().equals("<=")){
+                op = tokens.get(locPos).getLexeme();
+                locPos++;
+                pos = locPos;
+                bo.setOp(op);
+                return bo;
+            }
+        }
+        catch (Exception e) {}
+
+        try {
+            String op = null;
+            if (tokens.get(locPos).getType().equals(TypeOfToken.Operator) && tokens.get(locPos).getLexeme().equals(">")){
+                op = tokens.get(locPos).getLexeme();
+                locPos++;
+                pos = locPos;
+                bo.setOp(op);
+                return bo;
+            }
+        }
+        catch (Exception e) {}
+
+        try {
+            String op = null;
+            if (tokens.get(locPos).getType().equals(TypeOfToken.Operator) && tokens.get(locPos).getLexeme().equals(">=")){
+                op = tokens.get(locPos).getLexeme();
+                locPos++;
+                pos = locPos;
+                bo.setOp(op);
+                return bo;
+            }
+        }
+        catch (Exception e) {}
+
+        throw new Exception("Syntax grammar error. No \"*\" | \"/\" | \"%\" | \"<<\" | \">>\" | \"&\" | \"&^\" in `Rel_op`");
     }
 
     // UnaryExpr  = PrimaryExpr | unary_op UnaryExpr .
@@ -784,9 +1068,97 @@ public class SyntaxAnalyzer {
         throw new Exception("Syntax grammar error. No `PrimaryExpr` nor `unary_op UnaryExpr` in `UnaryExpr`");
     }
 
+    // unary_op   = "+" | "-" | "!" | "^" | "*" | "&" | "<-" .
     private Unary_op unary_op(int locPos) throws Exception{
-        // TODO
-        return null;
+        Unary_op uo = new Unary_op();
+        if (tokens.get(locPos).getType().equals(TypeOfToken.Operator)){
+            try {
+                String op = null;
+                if (tokens.get(locPos).getLexeme().equals("+")){
+                    op = tokens.get(locPos).getLexeme();
+                    locPos++;
+                    pos = locPos;
+                    uo.setOp(op);
+                    return uo;
+                }
+            }
+            catch (Exception e) {}
+
+            try {
+                String op = null;
+                if (tokens.get(locPos).getLexeme().equals("-")){
+                    op = tokens.get(locPos).getLexeme();
+                    locPos++;
+                    pos = locPos;
+                    uo.setOp(op);
+                    return uo;
+                }
+            }
+            catch (Exception e) {}
+
+            try {
+                String op = null;
+                if (tokens.get(locPos).getLexeme().equals("!")){
+                    op = tokens.get(locPos).getLexeme();
+                    locPos++;
+                    pos = locPos;
+                    uo.setOp(op);
+                    return uo;
+                }
+            }
+            catch (Exception e) {}
+
+            try {
+                String op = null;
+                if (tokens.get(locPos).getLexeme().equals("^")){
+                    op = tokens.get(locPos).getLexeme();
+                    locPos++;
+                    pos = locPos;
+                    uo.setOp(op);
+                    return uo;
+                }
+            }
+            catch (Exception e) {}
+
+            try {
+                String op = null;
+                if (tokens.get(locPos).getLexeme().equals("*")){
+                    op = tokens.get(locPos).getLexeme();
+                    locPos++;
+                    pos = locPos;
+                    uo.setOp(op);
+                    return uo;
+                }
+            }
+            catch (Exception e) {}
+
+            try {
+                String op = null;
+                if (tokens.get(locPos).getLexeme().equals("&")){
+                    op = tokens.get(locPos).getLexeme();
+                    locPos++;
+                    pos = locPos;
+                    uo.setOp(op);
+                    return uo;
+                }
+            }
+            catch (Exception e) {}
+
+            try {
+                String op = null;
+                if (tokens.get(locPos).getLexeme().equals("<-")){
+                    op = tokens.get(locPos).getLexeme();
+                    locPos++;
+                    pos = locPos;
+                    uo.setOp(op);
+                    return uo;
+                }
+            }
+            catch (Exception e) {}
+            throw new Exception("Syntax grammar error. No \"+\" | \"-\" | \"!\" | \"^\" | \"*\" | \"&\" | \"<-\" in `Unary_op`");
+
+        }
+        throw new Exception("Syntax grammar error. No `Operator token` in `Unary_op`");
     }
 
     // PrimaryExpr: (Operand | Conversion | MethodExpr) { Selector | Index | Slice | TypeAssertion | Argument } .
@@ -819,16 +1191,207 @@ public class SyntaxAnalyzer {
                             if (me != null) {
                                 locPos = pos;
                                 pe.setMethodExpr(me);
+                            }else {
+                                throw new Exception("Syntax grammar error. No `Operand` nor `Conversion` nor `MethodExpr` in `PrimaryExpr`");
                             }
-                            throw new Exception("Syntax grammar error. No `Operand` nor `Conversion` nor `MethodExpr` in `PrimaryExpr`");
                         }
                     }
                 }
             }
         }
+        
+        boolean flag = true;
+        while (flag) {
+            flag = false;
 
-        // TODO: parse { Selector | Index | Slice | TypeAssertion | Argument }
+            try {
+                Selector s = null;
+                s = selector(locPos);
+                if (s != null) {
+                    locPos = pos;
+                    pe.addToList(s);
+                    flag = true;
+                    continue;
+                }
+            }
+            catch (Exception e) {}
+
+            try {
+                Index i = null;
+                i = index(locPos);
+                if (i != null) {
+                    locPos = pos;
+                    pe.addToList(i);
+                    flag = true;
+                    continue;
+                }
+            }
+            catch (Exception e) {}
+
+            try {
+                Slice s = null;
+                s = slice(locPos);
+                if (s != null) {
+                    locPos = pos;
+                    pe.addToList(s);
+                    flag = true;
+                    continue;
+                }
+            }
+            catch (Exception e) {}
+
+            try {
+                TypeAssertion ta = null;
+                ta = typeAssertion(locPos);
+                if (ta != null) {
+                    locPos = pos;
+                    pe.addToList(ta);
+                    flag = true;
+                    continue;
+                }
+            }
+            catch (Exception e) {}
+
+            try {
+                Arguments a = null;
+                a = arguments(locPos);
+                if (a != null) {
+                    locPos = pos;
+                    pe.addToList(a);
+                    flag = true;
+                    continue;
+                }
+            }
+            catch (Exception e) {}
+        }
+        pos = locPos;
+        return pe;
+    }
+
+    // Arguments = "(" [ ( ExpressionList | Type [ "," ExpressionList ] ) [ "..." ] [ "," ] ] ")" .
+    private Arguments arguments(int locPos) throws Exception {
+        //TODO
         return null;
+    }
+
+    // TypeAssertion  = "." "(" Type ")" .
+    private TypeAssertion typeAssertion(int locPos) throws Exception{
+        TypeAssertion ta = new TypeAssertion();
+        if (tokens.get(locPos).getType().equals(TypeOfToken.Punctuation) && tokens.get(locPos).getLexeme().equals(".")) {
+            locPos++;
+            if (tokens.get(locPos).getType().equals(TypeOfToken.Punctuation) && tokens.get(locPos).getLexeme().equals("(")){
+                locPos++;
+                Type t = null;
+                t = type(locPos);
+                if (t != null) {
+                    locPos = pos;
+                    ta.setType(t);
+                    if (tokens.get(locPos).getType().equals(TypeOfToken.Punctuation) && tokens.get(locPos).getLexeme().equals(")")) {
+                        locPos++;
+                        pos=locPos;
+                        return ta;
+                    }
+                    throw new Exception("Syntax grammar error. No `)` after `Type` in `TypeAssertion`");
+                }
+                throw new Exception("Syntax grammar error. No `Type` after `.` `(` in `TypeAssertion`");
+
+            }
+            throw new Exception("Syntax grammar error. No `(` after `.` in `TypeAssertion`");
+        }
+        throw new Exception("Syntax grammar error. No `.` before `(` in `TypeAssertion`");
+    }
+
+    // Slice = "[" [ Expression ] ":" [ Expression ] "]" | [" [ Expression ] ":" Expression ":" Expression "]" .
+    private Slice slice(int locPos) throws Exception{
+        //TODO: check
+        Slice s = new Slice();
+        if (tokens.get(locPos).getType().equals(TypeOfToken.Punctuation) && tokens.get(locPos).getLexeme().equals("[")) {
+            try {
+                Expression e = null;
+                e = expression(locPos);
+                if (e != null) {
+                    s.addExpression(e);
+                    locPos = pos;
+                }
+            } catch (Exception e) {
+            }
+            if (tokens.get(locPos).getType().equals(TypeOfToken.Punctuation) && tokens.get(locPos).getLexeme().equals(":")) {
+                locPos++;
+                try {
+                    Expression e = null;
+                    e = expression(locPos);
+                    s.addExpression(e);
+                    locPos = pos;
+                    if (tokens.get(locPos).getType().equals(TypeOfToken.Punctuation) && tokens.get(locPos).getLexeme().equals(":")) {
+                        locPos++;
+                        e = expression(locPos);
+                        s.addExpression(e);
+                        locPos = pos;
+                        return s;
+                    }
+                } catch (Exception e) {
+                }
+                try {
+                    Expression e = null;
+                    e = expression(locPos);
+                    if (e != null) {
+                        s.addExpression(e);
+                        locPos = pos;
+                    }
+                } catch (Exception e) {
+                }
+                if (tokens.get(locPos).getType().equals(TypeOfToken.Punctuation) && tokens.get(locPos).getLexeme().equals("]")) {
+                    locPos++;
+                    pos = locPos;
+                    return s;
+                }
+                throw new Exception("Syntax grammar error. No `]` in the end in `Slice`");
+            }
+            throw new Exception("Syntax grammar error. No `:` after \"[\" `Expression` in `Slice`");
+        }
+        throw new Exception("Syntax grammar error. No `[` before `Expression` \":\" in `Slice`");
+    }
+
+    // Index  = "[" Expression "]" .
+    private Index index(int locPos) throws Exception {
+        Index i = new Index();
+        if (tokens.get(locPos).getType().equals(TypeOfToken.Punctuation) && tokens.get(locPos).getLexeme().equals("[")) {
+            locPos++;
+            Expression e = null;
+            e = expression(locPos);
+            if (e != null) {
+                locPos = pos;
+                i.setExpression(e);
+                if (tokens.get(locPos).getType().equals(TypeOfToken.Punctuation) && tokens.get(locPos).getLexeme().equals("]")){
+                    locPos++;
+                    pos = locPos;
+                    return i;
+                }
+                throw new Exception("Syntax grammar error. No `]` after `Expression` in `Index`");
+            }
+
+            throw new Exception("Syntax grammar error. No `identifier` after `[` in `Index`");
+        }
+        throw new Exception("Syntax grammar error. No `[` before `Expression` in `Index`");
+    }
+
+    // Selector = "." identifier .
+    private Selector selector(int locPos) throws Exception {
+        Selector s = new Selector();
+        if (tokens.get(locPos).getType().equals(TypeOfToken.Punctuation) && tokens.get(locPos).getLexeme().equals(".")) {
+            locPos++;
+            String i = null;
+            if (tokens.get(locPos).getType().equals(TypeOfToken.Identifier)){
+                i = tokens.get(locPos).getLexeme();
+                s.setIdentifier(i);
+                locPos++;
+
+                pos = locPos;
+                return s;
+            }
+            throw new Exception("Syntax grammar error. No `identifier` after `.` in `Selector`");
+        }
+        throw new Exception("Syntax grammar error. No `.` before identifier in `Selector`");
     }
 
     private MethodExpr methodExpr(int locPos) throws Exception{
