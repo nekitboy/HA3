@@ -2,9 +2,9 @@ package SyntaxAnalyzer.SyntaxVariables;
 
 import SyntaxAnalyzer.SyntaxVariable;
 
-// ElementType = Type .
-public class ElementType extends SyntaxVariable {
-    static final String type = "ElementType";
+// BaseType  = Type .
+public class BaseType extends SyntaxVariable {
+    static final String type = "BaseType";
 
     Type type_;
 
@@ -14,7 +14,7 @@ public class ElementType extends SyntaxVariable {
         this.type_ = type_;
     }
 
-    public ElementType() {
+    public BaseType() {
         super(type);
     }
 
@@ -24,10 +24,9 @@ public class ElementType extends SyntaxVariable {
         StringBuilder content= new StringBuilder();
 
         json.append("{\n");
-        if (type_ != null) {
-            content.append("Type: ");
-            content.append(type_.toJSON());
-        }
+        content.append("Type: ");
+        content.append(type_.toJSON());
+
 
         content = tabulize(content);
 
